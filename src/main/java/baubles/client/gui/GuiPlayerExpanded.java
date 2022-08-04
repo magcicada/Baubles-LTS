@@ -1,6 +1,10 @@
 package baubles.client.gui;
 
-import java.io.IOException;
+import baubles.api.BaublesApi;
+import baubles.client.ClientProxy;
+import baubles.common.Baubles;
+import baubles.common.container.ContainerPlayerExpanded;
+import baubles.common.container.SlotBauble;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.gui.inventory.GuiInventory;
@@ -10,9 +14,9 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import baubles.client.ClientProxy;
-import baubles.common.container.ContainerPlayerExpanded;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+
+import java.io.IOException;
 
 public class GuiPlayerExpanded extends InventoryEffectRenderer {
 
@@ -38,7 +42,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 	/**
 	 * Called from the main game loop to update the screen.
 	 */
-	@Override 
+	@Override
 	public void updateScreen()
 	{
 		((ContainerPlayerExpanded)inventorySlots).baubles.setEventBlock(false);
@@ -63,7 +67,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int p_146979_1_, int p_146979_2_)
 	{
-		this.fontRenderer.drawString(I18n.format("container.crafting", new Object[0]), 115, 8, 4210752);
+		this.fontRenderer.drawString(I18n.format("container.crafting"), 115, 8, 4210752);
 	}
 
 	/**
@@ -120,14 +124,14 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 		{
 			this.mc.player.closeScreen();
 		} else
-		super.keyTyped(par1, par2);
+			super.keyTyped(par1, par2);
 	}
 
 	public void displayNormalInventory()
 	{
 		GuiInventory gui = new GuiInventory(this.mc.player);
-		ReflectionHelper.setPrivateValue(GuiInventory.class, gui, this.oldMouseX, "oldMouseX", "field_147048_u");
-		ReflectionHelper.setPrivateValue(GuiInventory.class, gui, this.oldMouseY, "oldMouseY", "field_147047_v");
+		ObfuscationReflectionHelper.setPrivateValue(GuiInventory.class, gui, this.oldMouseX, "field_147048_u");
+		ObfuscationReflectionHelper.setPrivateValue(GuiInventory.class, gui, this.oldMouseY, "field_147047_v");
 		this.mc.displayGuiScreen(gui);
 	}
 }

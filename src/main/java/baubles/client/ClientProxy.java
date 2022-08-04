@@ -1,8 +1,10 @@
 
 package baubles.client;
 
-import java.util.Map;
-import org.lwjgl.input.Keyboard;
+import baubles.client.gui.GuiEvents;
+import baubles.client.gui.GuiPlayerExpanded;
+import baubles.common.Baubles;
+import baubles.common.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -12,10 +14,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import baubles.client.gui.GuiEvents;
-import baubles.client.gui.GuiPlayerExpanded;
-import baubles.common.Baubles;
-import baubles.common.CommonProxy;
+import org.lwjgl.input.Keyboard;
+
+import java.util.Map;
 
 public class ClientProxy extends CommonProxy {
 
@@ -34,8 +35,8 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
 		if (world instanceof WorldClient) {
-			switch (ID) {
-				case Baubles.GUI: return new GuiPlayerExpanded(player);
+			if (ID == Baubles.GUI) {
+				return new GuiPlayerExpanded(player);
 			}
 		}
 		return null;

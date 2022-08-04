@@ -1,11 +1,8 @@
 package baubles.client.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketOpenBaublesInventory;
 import baubles.common.network.PacketOpenNormalInventory;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -13,6 +10,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import org.lwjgl.opengl.GL11;
 
 public class GuiBaublesButton extends GuiButton {
 

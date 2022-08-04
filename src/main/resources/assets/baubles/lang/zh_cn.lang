@@ -11,7 +11,7 @@ keybind.baublesinventory=饰品栏
 #
 # Description
 name.AMULET=饰品 (护身符)
-name.RING=饰品 (指环)
+item.RING.name=饰品 (指环)
 name.BELT=饰品 (腰带)
 name.TRINKET=饰品 (任意)
 name.HEAD=饰品 (头部)

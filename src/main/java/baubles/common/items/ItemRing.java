@@ -10,7 +10,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumRarity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -24,11 +23,15 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import javax.annotation.Nonnull;
+
 @Mod.EventBusSubscriber
 public class ItemRing extends Item implements IBauble
 {
 	@GameRegistry.ObjectHolder(Baubles.MODID + ":ring")
-	public static final Item RING = null;
+	public static final Item RING = new ItemRing();
+
+	private String translationKey;
 
 	public ItemRing()
 	{
@@ -37,11 +40,14 @@ public class ItemRing extends Item implements IBauble
 		this.setHasSubtypes(true);
 		this.setMaxDamage(0);
 		this.setCreativeTab(CreativeTabs.TOOLS);
+		//this.setRegistryName("ring");
+		this.setRegistryName(Baubles.MODID + "ring");
+		this.setTranslationKey("RING");
 	}
 
 	@SubscribeEvent
 	public static void registerItems(RegistryEvent.Register<Item> event) {
-		event.getRegistry().register((new ItemRing()).setUnlocalizedName("Ring").setRegistryName("ring"));
+		event.getRegistry().register((new ItemRing()));
 	}
 
 	@Override
@@ -58,12 +64,12 @@ public class ItemRing extends Item implements IBauble
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-		if(!world.isRemote) { 
+		if(!world.isRemote) {
 			IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
-			for(int i = 0; i < baubles.getSlots(); i++) 
-				if((baubles.getStackInSlot(i) == null || baubles.getStackInSlot(i).isEmpty()) && baubles.isItemValidForSlot(i, player.getHeldItem(hand), player)) {
+			for (int i = 0; i < baubles.getSlots(); i++)
+				if ((baubles.getStackInSlot(i) == null || baubles.getStackInSlot(i).isEmpty()) && baubles.isItemValidForSlot(i, player.getHeldItem(hand), player)) {
 					baubles.setStackInSlot(i, player.getHeldItem(hand).copy());
-					if(!player.capabilities.isCreativeMode){
+					if (!player.capabilities.isCreativeMode) {
 						player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
 					}
 					onEquipped(player.getHeldItem(hand), player);
@@ -81,24 +87,15 @@ public class ItemRing extends Item implements IBauble
 	}
 
 	@Override
-	public boolean hasEffect(ItemStack par1ItemStack) {
+	public boolean hasEffect(@Nonnull ItemStack par1ItemStack) {
 		return true;
 	}
 
 	@Override
-	public EnumRarity getRarity(ItemStack par1ItemStack) {
-		return EnumRarity.RARE;
-	}
-
-	@Override
-	public String getUnlocalizedName(ItemStack par1ItemStack)
-	{
-		return super.getUnlocalizedName() + "." + par1ItemStack.getItemDamage();
-	}
-
-	@Override
 	public void onEquipped(ItemStack itemstack, EntityLivingBase player) {
-		player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
+		if (player instanceof EntityPlayer) {
+			player.playSound(SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, .75F, 1.9f);
+		}
 	}
 
 	@Override

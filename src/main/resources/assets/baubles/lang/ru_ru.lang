@@ -1,3 +1,4 @@
+### Translated by DrHesperus
 #
 # ITEMS
 item.Ring.0.name=Кольцо шахтёра
@@ -11,9 +12,9 @@ keybind.baublesinventory=Инвентарь Baubles
 #
 # Description
 name.AMULET=Бижутерия (Амулет)
-name.RING=Бижутерия (Кольцо)
+item.RING.name=Бижутерия (Кольцо)
 name.BELT=Бижутерия (Пояс)
 name.TRINKET=Бижутерия (Любая)
 name.HEAD=Бижутерия (Голова)
 name.BODY=Бижутерия (Тело)
-name.CHARM=Бижутерия (Брелок)
+name.CHARM=Бижутерия (Талисман)

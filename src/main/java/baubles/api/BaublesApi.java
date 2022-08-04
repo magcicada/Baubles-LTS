@@ -1,17 +1,35 @@
 package baubles.api;
 
-import baubles.api.cap.BaublesCapabilities;
-import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.cap.*;
 import baubles.api.inv.BaublesInventoryWrapper;
+import baubles.common.Baubles;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import io.netty.util.internal.ConcurrentSet;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Azanor
  */
-public class BaublesApi
-{
+public class BaublesApi {
+
+
 	/**
 	 * Retrieves the baubles inventory capability handler for the supplied player
 	 */
@@ -32,7 +50,7 @@ public class BaublesApi
 		handler.setPlayer(player);
 		return new BaublesInventoryWrapper(handler, player);
 	}
-	
+
 	/**
 	 * Returns if the passed in item is equipped in a bauble slot. Will return the first slot found
 	 * @return -1 if not found and slot number if it is found 
@@ -44,4 +62,5 @@ public class BaublesApi
 		}
 		return -1;
 	}
+
 }

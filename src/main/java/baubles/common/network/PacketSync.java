@@ -1,5 +1,9 @@
 package baubles.common.network;
 
+import baubles.api.BaublesApi;
+import baubles.api.cap.IBaublesItemHandler;
+import baubles.common.Baubles;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -9,10 +13,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import baubles.api.BaublesApi;
-import baubles.api.cap.IBaublesItemHandler;
-import baubles.common.Baubles;
-import io.netty.buffer.ByteBuf;
 
 public class PacketSync implements IMessage {
 

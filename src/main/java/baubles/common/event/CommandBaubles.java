@@ -1,8 +1,5 @@
 package baubles.common.event;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
@@ -15,6 +12,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandBaubles extends CommandBase {
 	private List<String> aliases;
@@ -53,30 +53,30 @@ public class CommandBaubles extends CommandBase {
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
 		if (args.length < 2 || args[0].equalsIgnoreCase("help")) {
-			sender.sendMessage(new TextComponentTranslation("\u00a73You can also use /baub or /bau instead of /baubles."));
-			sender.sendMessage(new TextComponentTranslation("\u00a73Use this to view the baubles inventory of a player."));
-			sender.sendMessage(new TextComponentTranslation("  /baubles view <player>"));
-			sender.sendMessage(new TextComponentTranslation("\u00a73Use this to clear a players baubles inventory. Default is everything or you can give a slot number"));
-			sender.sendMessage(new TextComponentTranslation("  /baubles clear <player> [<slot>]"));
+			sender.sendMessage(new TextComponentTranslation("\u00a73" + "help.message.one"));
+			sender.sendMessage(new TextComponentTranslation("\u00a73" + "help.message.two"));
+			sender.sendMessage(new TextComponentTranslation("\u00a73" + "help.message.three"));
+			sender.sendMessage(new TextComponentTranslation("\u00a73" + "help.message.four"));
+			sender.sendMessage(new TextComponentTranslation("\u00a73" + "help.message.five"));
 		}
 		else if (args.length >= 2) {
 			EntityPlayerMP entityplayermp = getPlayer(server,sender,args[1]);
 			
 			if (entityplayermp==null) {
-				sender.sendMessage(new TextComponentTranslation("\u00a7c"+args[1]+" not found"));
+				sender.sendMessage(new TextComponentTranslation("\u00a7c" + args[1] + " message.not_found"));
 				return;
 			}
 
 			IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(entityplayermp);
 
 			if (args[0].equalsIgnoreCase("view")) {
-				sender.sendMessage(new TextComponentTranslation("\u00a73Showing baubles for "+entityplayermp.getName()));
+				sender.sendMessage(new TextComponentTranslation("\u00a73" + "message.showing_baubles_for " + entityplayermp.getName()));
 				for (int a = 0; a<baubles.getSlots();a++) {
 					ItemStack st = baubles.getStackInSlot(a);
 					if (!st.isEmpty() && st.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
 						IBauble bauble = st.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
 						BaubleType bt = bauble.getBaubleType(st);
-						sender.sendMessage(new TextComponentTranslation("\u00a73 [Slot "+a+"] "+bt+" "+st.getDisplayName()));
+						sender.sendMessage(new TextComponentTranslation("\u00a73 [message.slot "+a+"] "+bt+" "+st.getDisplayName()));
 					}
 				}
 			}
@@ -85,8 +85,8 @@ public class CommandBaubles extends CommandBase {
 					int slot = -1;
 					try { slot = Integer.parseInt(args[2]); } catch (Exception e) {}
 					if (slot<0 || slot >= baubles.getSlots()) {
-						sender.sendMessage(new TextComponentTranslation("\u00a7cInvalid arguments"));
-						sender.sendMessage(new TextComponentTranslation("\u00a7cUse /baubles help to get help"));
+						sender.sendMessage(new TextComponentTranslation("\u00a7c" + "message.invalid_arguments"));
+						sender.sendMessage(new TextComponentTranslation("\u00a7c" + "message.use_help_command"));
 					} else {
 						baubles.setStackInSlot(slot, ItemStack.EMPTY); 
 						sender.sendMessage(new TextComponentTranslation("\u00a73Cleared baubles slot "+slot+" for "+entityplayermp.getName()));
@@ -100,13 +100,13 @@ public class CommandBaubles extends CommandBase {
 					entityplayermp.sendMessage(new TextComponentTranslation("\u00a74All your baubles slots have been cleared by admin "+sender.getName()));
 				}
 			} else {
-				sender.sendMessage(new TextComponentTranslation("\u00a7cInvalid arguments"));
-				sender.sendMessage(new TextComponentTranslation("\u00a7cUse /baubles help to get help"));
+				sender.sendMessage(new TextComponentTranslation("\u00a7c" + "message.invalid_arguments"));
+				sender.sendMessage(new TextComponentTranslation("\u00a7c" + "message.use_help_command"));
 			}
 
 		} else {
-			sender.sendMessage(new TextComponentTranslation("\u00a7cInvalid arguments"));
-			sender.sendMessage(new TextComponentTranslation("\u00a7cUse /baubles help to get help"));
+			sender.sendMessage(new TextComponentTranslation("\u00a7c" + "message.invalid_arguments"));
+			sender.sendMessage(new TextComponentTranslation("\u00a7c" + "message.use_help_command"));
 		}
 	}
 }

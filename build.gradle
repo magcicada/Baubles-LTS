@@ -1,47 +1,138 @@
 buildscript {
     repositories {
-        jcenter()
         maven {
-            name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            name 'ForgeGradle 5'
+            url 'https://maven.minecraftforge.net'
+        }
+        maven {
+            name 'MixinGradle'
+            url 'https://repo.spongepowered.org/repository/maven-public'
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        if (project.use_mixins.toBoolean()) {
+            classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+        }
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+
+plugins {
+    id 'wtf.gofancy.fancygradle' version '1.+'
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+// apply plugin: 'maven-publish'
+if (project.use_mixins.toBoolean()) {
+    apply plugin: 'org.spongepowered.mixin'
+}
+
+version = "${minecraft_version}-${mod_version}"
+group = project.maven_group
+archivesBaseName = project.archives_base_name
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
+if (project.use_lntellij_idea.toBoolean()) {
+    apply {
+        plugin 'java'
+        plugin 'idea'
+    }
 
 
-version = "1.12-1.5.2"
-group= "com.azanor.baubles"
-archivesBaseName = "Baubles"
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+}
 
-srcCompat = JavaVersion.VERSION_1_8
-targetCompat = JavaVersion.VERSION_1_8
+if (project.use_eclipse.toBoolean()) {
+    apply {
+        plugin 'java'
+        plugin 'eclipse'
+    }
+
+
+    eclipse {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+}
 
 minecraft {
-    version = "1.12-14.21.1.2404"
-    runDir = "run"
-    mappings = "snapshot_20170708"
-    makeObfSourceJar = false
+
+    mappings channel: 'stable', version: '39-1.12'
+
+    if (project.has_access_transformer.toBoolean()) {
+        accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    }
+
+    runs {
+        client {
+            workingDirectory project.file('run/client')
+            if (project.use_coremod.toBoolean()) {
+                jvmArg '-Dfml.coreMods.load=' + coremod_plugin_class_name
+            }
+            if (project.use_mixins.toBoolean()) {
+                jvmArg '-Dmixin.hotSwap=true'
+                jvmArg '-Dmixin.checks.interfaces=true'
+                jvmArg '-Dmixin.debug=true'
+            }
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+            if (project.use_coremod.toBoolean()) {
+                jvmArg '-Dfml.coreMods.load=' + coremod_plugin_class_name
+            }
+            if (project.use_mixins.toBoolean()) {
+                jvmArg '-Dmixin.hotSwap=true'
+                jvmArg '-Dmixin.checks.interfaces=true'
+            }
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            mods {
+                '${archives_base_name}' {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
-processResources
-{
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+sourceSets.main.resources {
+    srcDir 'src/generated/resources'
+}
+
+repositories {
+    maven {
+        url = 'https://maven.cleanroommc.com'
     }
-        
-    // copy everything else, thats not the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+    maven {
+        url = 'https://repo.spongepowered.org/maven'
     }
 }
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+    compileOnly fg.deobf('zone.rong:mixinbooter:5.0')
+    runtimeOnly 'zone.rong:mixinbooter:5.0'
+}
+
+fancyGradle {
+    patches {
+        resources
+        coremods
+        asm
+    }
+}
+
 
 // Create deobf dev jars
 task deobfJar(type: Jar) {
@@ -66,8 +157,62 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 
+sourceSets {
+    main {
+        ext.refMap = 'mixins.' + archives_base_name + '.refmap.json'
+    }
+}
+
+jar {
+    manifest {
+        // noinspection GroovyAssignabilityCheck
+        def attribute_map = [:]
+        if (project.use_coremod.toBoolean()) {
+            attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
+            if (project.include_mod.toBoolean()) {
+                attribute_map['FMLCorePluginContainsFMLMod'] = true
+                attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == 'build'
+            }
+        }
+        if (project.use_mixins.toBoolean()) {
+            attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
+        }
+
+        //attribute_map['Specification-Version'] = "${minecraft_version}-${mod_version}"
+        //attribute_map['Implementation-Title'] = project.archives_base_name
+        //attribute_map['Implementation-Version'] = "${minecraft_version}-${mod_version}"
+
+        attributes(attribute_map)
+    }
+}
+
 artifacts {
     archives deobfJar
     archives apiZip
     archives sourcesJar
 }
+
+jar.finalizedBy('reobfJar')
+
+processResources {
+    // required to allow file expansion later
+    duplicatesStrategy = 'include'
+
+    // this will ensure that this task is redone when the versions change.
+    inputs.property 'version', version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version': version
+    }
+
+    // copy everything else except the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
+
+

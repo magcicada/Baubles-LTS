@@ -10,10 +10,6 @@
  */
 package baubles.client;
 
-import javax.annotation.Nonnull;
-
-import org.lwjgl.opengl.GL11;
-
 import baubles.api.BaublesApi;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.api.render.IRenderBauble;
@@ -25,6 +21,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.lwjgl.opengl.GL11;
+
+import javax.annotation.Nonnull;
 
 public final class BaublesRenderLayer implements LayerRenderer<EntityPlayer> {
 

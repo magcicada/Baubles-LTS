@@ -1,3 +1,4 @@
+### Translated by RoCoKo
 #
 # ITEMS
 item.Ring.0.name=Madenci'nin Yüzüğü
@@ -11,7 +12,7 @@ keybind.baublesinventory=Baubles Envanteri
 #
 # Description
 name.AMULET=Bauble (Muska)
-name.RING=Bauble (Yüzük)
+item.RING.name=Bauble (Yüzük)
 name.BELT=Bauble (Kemer)
 name.TRINKET=Bauble (Herhangi)
 name.HEAD=Bauble (Kafa)

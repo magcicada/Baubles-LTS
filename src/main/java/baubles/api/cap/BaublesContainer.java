@@ -9,7 +9,7 @@ public class BaublesContainer extends ItemStackHandler implements IBaublesItemHa
 
 	private final static int BAUBLE_SLOTS = 7;
 	private boolean[] changed = new boolean[BAUBLE_SLOTS];
-	private boolean blockEvents=false;	
+	private boolean blockEvents=false;
 	private EntityLivingBase player;
 
 	public BaublesContainer()
