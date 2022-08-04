@@ -9,3 +9,7 @@ The 7 slots added are an amulet, belt, head, body, charm and 2 ring slots.
 
 Baubles is distributed under the Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0) license.
 
+
+Credits
+=======
+[Original Baubles mod By:Azanor13](https://www.curseforge.com/minecraft/mc-mods/baubles)
