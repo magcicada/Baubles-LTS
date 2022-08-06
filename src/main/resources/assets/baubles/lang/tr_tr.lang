@@ -12,7 +12,7 @@ keybind.baublesinventory=Baubles Envanteri
 #
 # Description
 name.AMULET=Bauble (Muska)
-item.RING.name=Bauble (Yüzük)
+name.RING=Bauble (Yüzük)
 name.BELT=Bauble (Kemer)
 name.TRINKET=Bauble (Herhangi)
 name.HEAD=Bauble (Kafa)

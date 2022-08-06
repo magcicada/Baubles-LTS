@@ -12,7 +12,7 @@ keybind.baublesinventory=Інвентар Baubles
 #
 # Description
 name.AMULET=Приваба (Амулет)
-item.RING.name=Приваба (Перстень)
+name.RING=Приваба (Перстень)
 name.BELT=Приваба (Пасок)
 name.TRINKET=Приваба (Будь-яка)
 name.HEAD=Приваба (Голова)

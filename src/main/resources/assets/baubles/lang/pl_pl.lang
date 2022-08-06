@@ -11,7 +11,7 @@ keybind.baublesinventory=Inwentarz Baubles
 #
 # Description
 name.AMULET=Bauble (Amulet)
-item.RING.name=Bauble (Pierścień)
+name.RING=Bauble (Pierścień)
 name.BELT=Bauble (Pas)
 name.TRINKET=Bauble (Dowolne)
 name.HEAD=Bauble (Głowa)

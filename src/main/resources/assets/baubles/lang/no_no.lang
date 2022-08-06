@@ -11,7 +11,7 @@ keybind.baublesinventory=Smykkeskrin
 #
 # Description
 name.AMULET=Smykke (Amulett)
-item.RING.name=Smykke (Ring)
+name.RING=Smykke (Ring)
 name.BELT=Smykke (Belte)
 name.TRINKET=Smykke (Alt)
 name.HEAD=Smykke (Hode)

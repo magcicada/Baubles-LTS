@@ -11,7 +11,7 @@ keybind.baublesinventory=Baubles Inventory
 #
 # Description
 name.AMULET=Bauble (Amulet)
-item.RING.name=Bauble (Ring)
+name.RING=Bauble (Ring)
 name.BELT=Bauble (Belt)
 name.TRINKET=Bauble (Any)
 name.HEAD=Bauble (Head)

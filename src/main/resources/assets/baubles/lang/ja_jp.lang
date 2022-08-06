@@ -12,7 +12,7 @@ keybind.baublesinventory=Baublesインベントリ
 #
 # Description
 name.AMULET=装飾品 (護符)
-item.RING.name=装飾品 (指輪)
+name.RING=装飾品 (指輪)
 name.BELT=装飾品 (腰帯)
 name.TRINKET=装飾品 (任意)
 name.HEAD=装飾品 (頭部)

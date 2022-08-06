@@ -11,7 +11,7 @@ keybind.baublesinventory=Inventaire des bibelots
 #
 # Description
 name.AMULET=Bibelot (Amulette)
-item.RING.name=Bibelot (Anneau)
+name.RING=Bibelot (Anneau)
 name.BELT=Bibelot (Ceinture)
 name.TRINKET=Bibelot (Tous)
 name.HEAD=Bibelot (Tête)

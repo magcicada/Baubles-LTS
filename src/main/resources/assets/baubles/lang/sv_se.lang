@@ -12,7 +12,7 @@ keybind.baublesinventory=Småsaksutrustning
 #
 # Description
 name.AMULET=Småsak (amulett)
-item.RING.name=Småsak (ring)
+name.RING=Småsak (ring)
 name.BELT=Småsak (bälte)
 name.TRINKET=Småsak (valfri)
 name.HEAD=Småsak (huvud)
