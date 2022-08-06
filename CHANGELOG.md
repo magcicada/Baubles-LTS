@@ -26,7 +26,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 - Update uk_ua.lang Thanks to(burunduk)
 - Added en_ud.lang Thanks to(The-Fireplace, X_Niter fixed spelling)
 - Added ja_jp.lang Thanks to(2z6c)
-- Added .lang Thanks to()
 - Added sv_se.lang, Thanks to(Regnander)
 - Added BaubleEquipmentChangeEvent for other mods to work with
 - Maintaining the [License](https://creativecommons.org/licenses/by-nc-sa/3.0/)
