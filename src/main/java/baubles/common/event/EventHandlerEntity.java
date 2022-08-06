@@ -2,10 +2,7 @@ package baubles.common.event;
 
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
-import baubles.api.cap.BaublesCapabilities;
-import baubles.api.cap.BaublesContainer;
-import baubles.api.cap.BaublesContainerProvider;
-import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.cap.*;
 import baubles.common.Baubles;
 import baubles.common.network.PacketHandler;
 import baubles.common.network.PacketSync;
@@ -13,18 +10,25 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.*;
 
@@ -165,5 +169,42 @@ public class EventHandlerEntity {
 				baubles.setStackInSlot(i, ItemStack.EMPTY);
 			}
 		}
+	}
+	@SubscribeEvent
+	public void onBaubleRightClick(PlayerInteractEvent.RightClickItem event) {
+		EntityPlayer playerEntity = event.getEntityPlayer();
+		ItemStack stack = event.getItemStack();
+
+		IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(playerEntity);
+
+		BaublesApi.getOBaubles(stack).ifPresent(eBaubles -> {
+			if (eBaubles.canRightClickEquip()) {
+				BaublesApi.getOBaublesHandler(playerEntity).ifPresent(handler -> {
+
+					if (!playerEntity.world.isRemote) {
+
+						if (eBaubles.canEquip(stack, playerEntity)) {
+
+							for (int i = 0; i < baubles.getSlots(); i++) {
+								baubles.getStackInSlot(i);
+								if (baubles.getStackInSlot(i).isEmpty() && baubles.isItemValidForSlot(i, playerEntity.getHeldItem(playerEntity.getActiveHand()), playerEntity)) {
+									baubles.setStackInSlot(i, playerEntity.getHeldItem(playerEntity.getActiveHand()).copy());
+									if (!playerEntity.capabilities.isCreativeMode && !playerEntity.isDead || !playerEntity.isCreative() && !playerEntity.isDead) {
+										playerEntity.inventory.setInventorySlotContents(playerEntity.inventory.currentItem, ItemStack.EMPTY);
+										stack.shrink(1);
+										event.setCancellationResult(EnumActionResult.SUCCESS);
+										event.setCanceled(true);
+										return;
+									}
+								}
+							}
+						}
+					} else {
+						event.setCancellationResult(EnumActionResult.SUCCESS);
+						event.setCanceled(true);
+					}
+				});
+			}
+		});
 	}
 }

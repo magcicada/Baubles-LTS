@@ -1,7 +1,9 @@
 package baubles.api;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 
 /**
  * 
@@ -54,6 +56,24 @@ public interface IBauble {
 	 */
 	default boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
 		return false;
+	}
+
+	/**
+	 * Plays a sound server-side when a bauble is equipped from right-clicking the ItemStack in hand
+	 * This can be overriden to play nothing, but it is advised to always play something as an auditory feedback for players
+	 * @param livingEntity  The wearer of the ItemStack
+	 */
+	default void playEquipSound(EntityLivingBase livingEntity) {
+		livingEntity.world.playSound(null, livingEntity.getPosition(), SoundEvents.ITEM_ARMOR_EQUIP_GENERIC,
+				SoundCategory.NEUTRAL, 1.0f, 1.0f);
+	}
+
+	/**
+	 * Determines if the Baubles or the ItemStack can be automatically equipped into the first available slot when right-clicked
+	 * @return  True to enable right-clicking auto-equip, false to disable
+	 */
+	default boolean canRightClickEquip() {
+		return true;
 	}
 
 }
