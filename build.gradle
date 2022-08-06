@@ -1,10 +1,6 @@
 buildscript {
     repositories {
         maven {
-            name 'ForgeGradle 5'
-            url 'https://maven.minecraftforge.net'
-        }
-        maven {
             name 'MixinGradle'
             url 'https://repo.spongepowered.org/repository/maven-public'
         }
@@ -27,9 +23,9 @@ if (project.use_mixins.toBoolean()) {
     apply plugin: 'org.spongepowered.mixin'
 }
 
-version = "${minecraft_version}-${mod_version}"
+version = "${mod_version}"
 group = project.maven_group
-archivesBaseName = project.archives_base_name
+archivesBaseName = "${project.archives_base_name}-1.12.2"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
@@ -106,9 +102,6 @@ minecraft {
     }
 }
 
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
 
 repositories {
     maven {
@@ -121,8 +114,11 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
-    compileOnly fg.deobf('zone.rong:mixinbooter:5.0')
-    runtimeOnly 'zone.rong:mixinbooter:5.0'
+
+    if (project.use_mixins.toBoolean()) {
+        compileOnly fg.deobf('zone.rong:mixinbooter:5.0')
+        runtimeOnly 'zone.rong:mixinbooter:5.0'
+    }
 }
 
 fancyGradle {
@@ -142,6 +138,7 @@ task deobfJar(type: Jar) {
 
 // Create API library jar
 task apiZip(type: Jar) {
+    duplicatesStrategy = 'include'
     from(sourceSets.main.java) {
         include "baubles/api/**"
     }
@@ -159,8 +156,30 @@ task sourcesJar(type: Jar) {
 
 sourceSets {
     main {
-        ext.refMap = 'mixins.' + archives_base_name + '.refmap.json'
+        if (project.use_mixins.toBoolean()) {
+            ext.refMap = 'mixins.' + project.archives_base_name + '.refmap.json'
+        }
+
+        java {
+            srcDirs = ["src/main/java"]
+        }
+
+        resources {
+            srcDirs = ["src/main/java", "src/main/resources"]
+        }
     }
+
+    test {
+        java {
+            srcDirs = ["src/test/java"]
+        }
+        resources {
+            srcDirs = ["src/test/resources"]
+        }
+    }
+
+    // at compile time, put resources in same directories as classes
+    main.output.setResourcesDir(main.java.outputDir)
 }
 
 jar {
@@ -177,11 +196,6 @@ jar {
         if (project.use_mixins.toBoolean()) {
             attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
         }
-
-        //attribute_map['Specification-Version'] = "${minecraft_version}-${mod_version}"
-        //attribute_map['Implementation-Title'] = project.archives_base_name
-        //attribute_map['Implementation-Version'] = "${minecraft_version}-${mod_version}"
-
         attributes(attribute_map)
     }
 }
