@@ -40,9 +40,8 @@ public class ItemRing extends Item implements IBauble
 		this.setHasSubtypes(true);
 		this.setMaxDamage(0);
 		this.setCreativeTab(CreativeTabs.TOOLS);
-		//this.setRegistryName("ring");
-		this.setRegistryName(Baubles.MODID + "ring");
-		this.setTranslationKey("RING");
+		this.setTranslationKey("Ring.0");
+		this.setRegistryName("ring");
 	}
 
 	@SubscribeEvent
@@ -81,7 +80,7 @@ public class ItemRing extends Item implements IBauble
 
 	@Override
 	public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
-		if (itemstack.getItemDamage()==0 && player.ticksExisted%39==0) {
+		if (itemstack.getItemDamage() == 0 && player.ticksExisted % 39 == 0) {
 			player.addPotionEffect(new PotionEffect(MobEffects.HASTE,40,0,true,true));
 		}
 	}
