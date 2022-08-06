@@ -7,8 +7,10 @@ import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesCapabilities.CapabilityBaubles;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.client.ClientProxy;
 import baubles.common.event.CommandBaubles;
 import baubles.common.network.PacketHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -33,7 +35,7 @@ public class Baubles {
 
 	public static final String MODID = "baubles";
 	public static final String MODNAME = "Baubles";
-	public static final String VERSION = "1.12.2-1.6.0";
+	public static final String VERSION = "1.12.2-1.0.6.1";
 
 	@SidedProxy(clientSide = "baubles.client.ClientProxy", serverSide = "baubles.common.CommonProxy")
 	public static CommonProxy proxy;
@@ -55,11 +57,11 @@ public class Baubles {
 		} catch (Exception e) {
 			Baubles.log.fatal("Baubles has a problem loading it's configuration");
 		} finally {
-			if (Config.config != null) Config.save();
+			if (Config.config != null) {
+				Config.save();
+			}
 		}
 
-		// Deprecated CapabilityManager registration. *Saved for historical purposes*
-		// CapabilityManager.INSTANCE.register(IBaublesItemHandler.class, new CapabilityBaubles<IBaublesItemHandler>(), BaublesContainer.class);
 
 		CapabilityManager capabilityManager = CapabilityManager.INSTANCE;
 
