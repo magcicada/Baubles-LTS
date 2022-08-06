@@ -1,21 +1,29 @@
 package baubles.common.container;
 
+import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.common.Baubles;
 import baubles.common.event.BaubleEquipmentChangeEvent;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.SlotItemHandler;
 
+import javax.annotation.Nullable;
+
 public class SlotBauble extends SlotItemHandler
 {
 	int baubleSlot;
+
+	BaubleType baubleType;
 	EntityPlayer player;
 
 	public SlotBauble(EntityPlayer player, IBaublesItemHandler itemHandler, int slot, int par4, int par5)
@@ -80,5 +88,12 @@ public class SlotBauble extends SlotItemHandler
 	public int getSlotStackLimit()
 	{
 		return 1;
+	}
+
+	@Nullable
+	@SideOnly(Side.CLIENT)
+	@Override
+	public String getSlotTexture() {
+		return BaublesApi.getIcons().getOrDefault(baubleType.name(), new ResourceLocation(Baubles.MODID, "item/empty_generic_slot")).toString();
 	}
 }

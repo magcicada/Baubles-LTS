@@ -1,20 +1,34 @@
 
 package baubles.client;
 
+import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
 import baubles.client.gui.GuiEvents;
 import baubles.client.gui.GuiPlayerExpanded;
 import baubles.common.Baubles;
 import baubles.common.CommonProxy;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.spectator.PlayerMenuObject;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.common.FMLContainer;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.internal.FMLMessage;
 import org.lwjgl.input.Keyboard;
+import sun.net.ResourceManager;
 
 import java.util.Map;
 
@@ -56,5 +70,26 @@ public class ClientProxy extends CommonProxy {
 
 		render = skinMap.get("slim");
 		render.addLayer(new BaublesRenderLayer());
+
+
+		BaublesApi.registerIcon("amulet", new ResourceLocation(Baubles.MODID, "item/empty_amulet_slot"));
+		BaublesApi.registerIcon("ring", new ResourceLocation(Baubles.MODID, "item/empty_ring_slot"));
+		BaublesApi.registerIcon("belt", new ResourceLocation(Baubles.MODID, "item/empty_belt_slot"));
+		BaublesApi.registerIcon("trinket", new ResourceLocation(Baubles.MODID, "item/empty_trinket_slot"));
+		BaublesApi.registerIcon("head", new ResourceLocation(Baubles.MODID, "item/empty_head_slot"));
+		BaublesApi.registerIcon("body", new ResourceLocation(Baubles.MODID, "item/empty_body_slot"));
+		BaublesApi.registerIcon("charm", new ResourceLocation(Baubles.MODID, "item/empty_charm_slot"));
+
+	}
+
+	@SubscribeEvent
+	public static void onTextureStitch(TextureStitchEvent.Pre evt) {
+		TextureMap map = evt.getMap();
+		BaubleType.processIcons();
+
+		for (ResourceLocation resource : BaublesApi.getIcons().values()) {
+			map.registerSprite(resource);
+		}
+		map.registerSprite(new ResourceLocation("curios:item/empty_generic_slot"));
 	}
 }

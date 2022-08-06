@@ -3,6 +3,7 @@ package baubles.api.cap;
 import baubles.api.IBauble;
 import baubles.common.Baubles;
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.Capability;
@@ -34,7 +35,7 @@ public class BaublesCapabilities {
 
 		@Override
 		public NBTBase writeNBT (Capability<IBauble> capability, IBauble instance, EnumFacing side) {
-			return null;
+			return new NBTTagCompound();
 		}
 
 		@Override
@@ -42,8 +43,4 @@ public class BaublesCapabilities {
 
 		}
 	}
-
-	public static final ResourceLocation ID_INVENTORY = new ResourceLocation(Baubles.MODID, "inventory");
-
-	public static final ResourceLocation ID_ITEM = new ResourceLocation(Baubles.MODID, "item");
 }

@@ -48,7 +48,7 @@ public class PacketSync implements IMessage {
 		public IMessage onMessage(PacketSync message, MessageContext ctx) {
 			Minecraft.getMinecraft().addScheduledTask(new Runnable(){ public void run() {
 				World world = Baubles.proxy.getClientWorld();
-				if (world==null) return;
+				if (world == null) return;
 				Entity p = world.getEntityByID(message.playerId);
 				if (p !=null && p instanceof EntityPlayer) {
 					IBaublesItemHandler baubles = BaublesApi.getBaublesHandler((EntityPlayer) p);

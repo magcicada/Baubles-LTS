@@ -1,11 +1,14 @@
 package baubles.api.inv;
 
+import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+
+import java.util.SortedMap;
 
 public class BaublesInventoryWrapper implements IInventory {
 	final IBaublesItemHandler handler;

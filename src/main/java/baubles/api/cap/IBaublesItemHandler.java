@@ -1,8 +1,11 @@
 package baubles.api.cap;
 
+import baubles.api.BaubleType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
+
+import java.util.SortedMap;
 
 public interface IBaublesItemHandler extends IItemHandlerModifiable {
 
