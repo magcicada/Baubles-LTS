@@ -11,7 +11,7 @@ keybind.baublesinventory=Инвентара на Дранкулките
 #
 # Description
 name.AMULET=Дрънкулка (Амулет)
-item.RING.name=Дрънкулка (Пръстен)
+name.RING=Дрънкулка (Пръстен)
 name.BELT=Дрънкулка (Колан)
 name.TRINKET=Дрънкулка (Всяко)
 name.HEAD=Дрънкулка (Глава)
