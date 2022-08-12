@@ -1,12 +1,14 @@
 package baubles.common;
 
 import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.BaubleItem;
 import baubles.api.cap.BaublesCapabilities;
 import baubles.api.cap.BaublesCapabilities.CapabilityBaubles;
 import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
+import baubles.api.modcom.BaublesModCom;
 import baubles.client.ClientProxy;
 import baubles.common.event.CommandBaubles;
 import baubles.common.network.PacketHandler;
@@ -17,6 +19,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -24,6 +27,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
+
+import static net.minecraftforge.registries.ForgeRegistry.DEBUG;
 
 @Mod(
 		modid = Baubles.MODID, 
@@ -95,5 +100,13 @@ public class Baubles {
 	public void serverLoad(FMLServerStartingEvent event)
 	{
 		event.registerServerCommand(new CommandBaubles());
+	}
+
+	private void process(FMLInterModComms.IMCEvent evt) {
+		BaubleType.processBaubleTypes(evt.getMessages().stream(), evt.getMessages().stream());
+	}
+
+	private static void send(String id, Object msg) {
+		FMLInterModComms.sendMessage(MODID, id, msg.toString());
 	}
 }
