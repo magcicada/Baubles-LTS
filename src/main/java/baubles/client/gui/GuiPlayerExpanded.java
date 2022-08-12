@@ -63,9 +63,13 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 	@Override
 	public void updateScreen()
 	{
-		((ContainerPlayerExpanded)inventorySlots).baubles.setEventBlock(false);
-		updateActivePotionEffects();
-		resetGuiLeft();
+		if (!Config.useCurioGUI) {
+			((ContainerPlayerExpanded) inventorySlots).baubles.setEventBlock(false);
+			updateActivePotionEffects();
+			resetGuiLeft();
+		}
+		super.updateScreen();
+
 	}
 
 	/**
@@ -108,7 +112,7 @@ public class GuiPlayerExpanded extends InventoryEffectRenderer {
 				Slot slot = this.getSlotUnderMouse();
 				if (slot instanceof SlotBauble && !slot.getHasStack()) {
 					SlotBauble slotBauble = (SlotBauble)slot;
-					this.drawHoveringText(slotBauble.toString(), mouseX - this.guiLeft, mouseY - this.guiTop);
+					this.drawHoveringText(slotBauble.getSlotName(), mouseX - this.guiLeft, mouseY - this.guiTop);
 				}
 			}
 		}
