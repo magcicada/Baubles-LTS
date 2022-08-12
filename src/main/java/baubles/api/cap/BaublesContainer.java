@@ -1,13 +1,24 @@
 package baubles.api.cap;
 
+import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.common.Config;
+import baubles.common.network.PacketHandler;
+import baubles.common.network.PacketSync;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nonnull;
+import java.util.Collections;
+import java.util.SortedMap;
 
 public class BaublesContainer extends ItemStackHandler implements IBaublesItemHandler {
 
@@ -18,11 +29,15 @@ public class BaublesContainer extends ItemStackHandler implements IBaublesItemHa
 
 	protected NonNullList<ItemStack> previousStacks;
 
+	SortedMap<String, BaublesContainer> baubleSlots;
+
+	NonNullList<ItemStack> invalidCache;
+
 	protected boolean isHidden = false;
 
 	public BaublesContainer()
 	{
-		super(BAUBLE_SLOTS);
+		this(Config.useCurioGUI ? 1 : BAUBLE_SLOTS);
 	}
 
 	public BaublesContainer(int size) {
@@ -74,10 +89,15 @@ public class BaublesContainer extends ItemStackHandler implements IBaublesItemHa
 	}
 
 	@Override
-	public void setStackInSlot(int slot, ItemStack stack) {
-		if (stack==null || stack.isEmpty() || this.isItemValidForSlot(slot, stack, player)) {
+	public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
+		if (stack.isEmpty() || this.isItemValidForSlot(slot, stack, player)) {
 			super.setStackInSlot(slot, stack);
 		}
+	}
+
+	@Override
+	public void setStackInSlot(String identifier, int slot, @Nonnull ItemStack stack) {
+		this.baubleSlots.get(identifier).setStackInSlot(slot, stack);
 	}
 
 	@Override
@@ -122,6 +142,67 @@ public class BaublesContainer extends ItemStackHandler implements IBaublesItemHa
 	@Override
 	public void setPlayer(EntityLivingBase player) {
 		this.player = player;
+	}
+
+	@Override
+	public SortedMap<String, BaublesContainer> getBaubleMap() {
+		return Collections.unmodifiableSortedMap(this.baubleSlots);
+	}
+
+	/**
+	 * @return  An unmodifiable list of all unique registered identifiers
+	 */
+	public static ImmutableSet<String> getTypeIdentifiers() {
+		return ImmutableSet.copyOf(BaubleType.idToType.keySet());
+	}
+
+	@Override
+	public SortedMap<String, BaublesContainer> getDefaultSlots() {
+		SortedMap<String, BaublesContainer> slots = Maps.newTreeMap();
+
+		for (String id : BaublesApi.getTypeIdentifiers()) {
+
+			BaubleType type = BaublesApi.getType(id);
+
+			if (type != null && type.isEnabled()) {
+				BaublesContainer handler = new BaublesContainer(type.getSize());
+				handler.setHidden(type.isHidden());
+				slots.put(id, handler);
+			}
+
+		}
+		return slots;
+	}
+
+	@Override
+	public void enableBauble(String identifier) {
+		BaubleType type = BaublesApi.getType(identifier);
+
+		// A poor testing that is comment out to stop breaking
+
+//		if (type != null) {
+//			this.baubleSlots.putIfAbsent(identifier, new BaublesContainer(type.getSize()));
+//
+//			if (!player.world.isRemote && player instanceof EntityPlayerMP) {
+//				PacketHandler.INSTANCE.sendTo(new PacketSync(player.getEntityId(), identifier, false),
+//						((EntityPlayerMP)player).connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+//			}
+//		}
+	}
+
+	@Override
+	public void disableBauble(String identifier) {
+		// Not using, this was just me playing with an idea before I was interrupted
+	}
+
+	@Override
+	public void setBaubleMap(SortedMap<String, BaublesContainer> map) {
+		this.baubleSlots = map;
+	}
+
+	@Override
+	public void addInvalid(ItemStack stack) {
+		this.invalidCache.add(stack);
 	}
 
 	public void addSize(int amount) {
