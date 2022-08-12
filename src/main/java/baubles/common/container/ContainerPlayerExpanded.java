@@ -152,15 +152,23 @@ public class ContainerPlayerExpanded extends Container
 			this.onCraftMatrixChanged(this.craftMatrix);
 		} else {
 			if (baubles != null) {
+				SortedMap<String, BaublesContainer> baubleMap = baubles.getBaubleMap();
 				int slots = 0;
 				int yOffset = 12;
 
 				IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(thePlayer);
 
-				for (int i = 0; i < baubles.getSlots() && slots < 8; i++) {
-					this.addSlotToContainer(new Slot(playerInv, i, -18, yOffset));
-					yOffset += 18;
-					slots++;
+				for (String identifier : baubleMap.keySet()) {
+					BaublesContainer stackHandler = baubleMap.get(identifier);
+
+					if (!stackHandler.isHidden()) {
+
+						for (int i = 0; i < stackHandler.getSlots() && slots < 8; i++) {
+							this.addSlotToContainer(new SlotBauble(player, stackHandler, i, identifier,-18, yOffset));
+							yOffset += 18;
+							slots++;
+						}
+					}
 				}
 			}
 		}
@@ -176,26 +184,27 @@ public class ContainerPlayerExpanded extends Container
 			if (this.baubles != null) {
 
 				IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(thePlayer);
+				SortedMap<String, BaublesContainer> baubleMap = baubles.getBaubleMap();
 				int slots = 0;
 				int yOffset = 12;
 				int index = 0;
 				this.inventorySlots.subList(46, this.inventorySlots.size()).clear();
 				this.inventoryItemStacks.subList(46, this.inventoryItemStacks.size()).clear();
 
-				boolean doIHide = ((BaublesContainer) BaublesApi.getBaublesHandler(thePlayer)).isHidden();
-				if (!doIHide) {
+				for (String identifier : baubleMap.keySet()) {
+					BaublesContainer stackHandler = baubleMap.get(identifier);
 
-					for (int i = 0; i < baubles.getSlots() && slots < 8; i++) {
-						baubles.getStackInSlot(i);
+					if (!stackHandler.isHidden()) {
 
-						if (index >= indexIn) {
-							IInventory playerInv = new InventoryPlayer(thePlayer);
-							//this.addSlotToContainer(new Slot(playerInv, stackHandler, i, identifier,-18, yOffset));
-							this.addSlotToContainer(new Slot(playerInv, i, -18, yOffset));
-							yOffset += 18;
-							slots++;
+						for (int i = 0; i < stackHandler.getSlots() && slots < 8; i++) {
+
+							if (index >= indexIn) {
+								this.addSlotToContainer(new SlotBauble(thePlayer, stackHandler, i, identifier,-18, yOffset));
+								yOffset += 18;
+								slots++;
+							}
+							index++;
 						}
-						index++;
 					}
 				}
 
@@ -278,119 +287,142 @@ public class ContainerPlayerExpanded extends Container
 			itemstack = itemstack1.copy();
 
 			EntityEquipmentSlot entityequipmentslot = EntityLiving.getSlotForItemStack(itemstack);
-			
-			int slotShift = baubles.getSlots();
+			if (!Config.useCurioGUI) {
+				int slotShift = baubles.getSlots();
 
-			if (index == 0)
-			{
-				if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, true))
-				{
-					return ItemStack.EMPTY;
-				}
-
-				slot.onSlotChange(itemstack1, itemstack);
-			}
-			else if (index < 5)
-			{
-				if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false))
-				{
-					return ItemStack.EMPTY;
-				}
-			}
-			else if (index < 9)
-			{
-				if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false))
-				{
-					return ItemStack.EMPTY;
-				}
-			}
-
-			// baubles -> inv
-			else if (index < 9 + slotShift)
-			{
-				if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false))
-				{
-					return ItemStack.EMPTY;
-				}
-			}
-
-			// inv -> armor
-			else if (entityequipmentslot.getSlotType() == EntityEquipmentSlot.Type.ARMOR && !(this.inventorySlots.get(8 - entityequipmentslot.getIndex())).getHasStack())
-			{
-				int i = 8 - entityequipmentslot.getIndex();
-
-				if (!this.mergeItemStack(itemstack1, i, i + 1, false))
-				{
-					return ItemStack.EMPTY;
-				}
-			}
-
-			// inv -> offhand
-			else if (entityequipmentslot == EntityEquipmentSlot.OFFHAND && !this.inventorySlots.get(45+ slotShift).getHasStack())
-			{
-				if (!this.mergeItemStack(itemstack1, 45+ slotShift, 46+ slotShift, false))
-				{
-					return ItemStack.EMPTY;
-				}
-			}
-
-			// inv -> bauble
-			else if (itemstack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null))
-			{
-				IBauble bauble = itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
-				for (int baubleSlot : bauble.getBaubleType(itemstack).getValidSlots()) {
-					if ( bauble.canEquip(itemstack1, thePlayer) && !this.inventorySlots.get(baubleSlot + 9).getHasStack() &&
-							!this.mergeItemStack(itemstack1, baubleSlot+9, baubleSlot + 10, false))
-					{
+				if (index == 0) {
+					if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, true)) {
 						return ItemStack.EMPTY;
-					} 
-					if (itemstack1.getCount() == 0) break;
+					}
+
+					slot.onSlotChange(itemstack1, itemstack);
+				} else if (index < 5) {
+					if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (index < 9) {
+					if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false)) {
+						return ItemStack.EMPTY;
+					}
 				}
-			}
-			else if (index >= 9 + slotShift && index < 36 + slotShift)
-			{
-				if (!this.mergeItemStack(itemstack1, 36 + slotShift, 45 + slotShift, false))
-				{
+
+				// baubles -> inv
+				else if (index < 9 + slotShift) {
+					if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false)) {
+						return ItemStack.EMPTY;
+					}
+				}
+
+				// inv -> armor
+				else if (entityequipmentslot.getSlotType() == EntityEquipmentSlot.Type.ARMOR && !(this.inventorySlots.get(8 - entityequipmentslot.getIndex())).getHasStack()) {
+					int i = 8 - entityequipmentslot.getIndex();
+
+					if (!this.mergeItemStack(itemstack1, i, i + 1, false)) {
+						return ItemStack.EMPTY;
+					}
+				}
+
+				// inv -> offhand
+				else if (entityequipmentslot == EntityEquipmentSlot.OFFHAND && !this.inventorySlots.get(45 + slotShift).getHasStack()) {
+					if (!this.mergeItemStack(itemstack1, 45 + slotShift, 46 + slotShift, false)) {
+						return ItemStack.EMPTY;
+					}
+				}
+
+				// inv -> bauble
+				else if (itemstack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+					IBauble bauble = itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null);
+					for (int baubleSlot : bauble.getBaubleType(itemstack).getValidSlots()) {
+						if (bauble.canEquip(itemstack1, thePlayer) && !this.inventorySlots.get(baubleSlot + 9).getHasStack() &&
+								!this.mergeItemStack(itemstack1, baubleSlot + 9, baubleSlot + 10, false)) {
+							return ItemStack.EMPTY;
+						}
+						if (itemstack1.getCount() == 0) break;
+					}
+				} else if (index >= 9 + slotShift && index < 36 + slotShift) {
+					if (!this.mergeItemStack(itemstack1, 36 + slotShift, 45 + slotShift, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (index >= 36 + slotShift && index < 45 + slotShift) {
+					if (!this.mergeItemStack(itemstack1, 9 + slotShift, 36 + slotShift, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (!this.mergeItemStack(itemstack1, 9 + slotShift, 45 + slotShift, false)) {
 					return ItemStack.EMPTY;
 				}
-			}
-			else if (index >= 36+ slotShift && index < 45+ slotShift)
-			{
-				if (!this.mergeItemStack(itemstack1, 9+ slotShift, 36+ slotShift, false))
-				{
+
+				if (itemstack1.isEmpty()) {
+					slot.putStack(ItemStack.EMPTY);
+				} else {
+					slot.onSlotChanged();
+				}
+
+				if (itemstack1.getCount() == itemstack.getCount()) {
 					return ItemStack.EMPTY;
 				}
-			}
-			else if (!this.mergeItemStack(itemstack1, 9+ slotShift, 45+ slotShift, false))
-			{
-				return ItemStack.EMPTY;
-			}
 
-			if (itemstack1.isEmpty())
-			{
-				slot.putStack(ItemStack.EMPTY);
-			}
-			else
-			{
-				slot.onSlotChanged();
-			}
+				if (itemstack1.isEmpty() && !baubles.isEventBlocked() && slot instanceof SlotBauble &&
+						itemstack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
 
-			if (itemstack1.getCount() == itemstack.getCount())
-			{
-				return ItemStack.EMPTY;
-			}
+					itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(itemstack, playerIn);
+				}
 
-			if (itemstack1.isEmpty() && !baubles.isEventBlocked() && slot instanceof SlotBauble &&
-					itemstack.hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
+				ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
 
-				itemstack.getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(itemstack, playerIn);
-			}
+				if (index == 0) {
+					playerIn.dropItem(itemstack2, false);
+				}
+			} else {
+				if (index == 0) {
 
-			ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
+					if (!this.mergeItemStack(itemstack1, 9, 45, true)) {
+						return ItemStack.EMPTY;
+					}
+					slot.onSlotChange(itemstack1, itemstack);
+				} else if (index < 5) {
 
-			if (index == 0)
-			{
-				playerIn.dropItem(itemstack2, false);
+					if (!this.mergeItemStack(itemstack1, 9, 45, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (index < 9) {
+
+					if (!this.mergeItemStack(itemstack1, 9, 45, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (entityequipmentslot.getSlotType() == EntityEquipmentSlot.Type.ARMOR && !(this.inventorySlots.get(8 - entityequipmentslot.getIndex())).getHasStack()) {
+					int i = 8 - entityequipmentslot.getIndex();
+
+					if (!this.mergeItemStack(itemstack1, i, i + 1, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (index < 46 && BaublesApi.getOBaubles(itemstack).isPresent()) {
+
+					if (this.mergeItemStack(itemstack1, 46, this.inventorySlots.size(), false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (entityequipmentslot == EntityEquipmentSlot.OFFHAND && !(this.inventorySlots.get(45)).getHasStack()) {
+
+					if (!this.mergeItemStack(itemstack1, 45, 46, false)) {
+						return ItemStack.EMPTY;
+					}
+				} else if (!this.mergeItemStack(itemstack1, 9, 45, false)) {
+					return ItemStack.EMPTY;
+				}
+
+				if (itemstack1.isEmpty()) {
+					slot.putStack(ItemStack.EMPTY);
+				} else {
+					slot.onSlotChanged();
+				}
+
+				if (itemstack1.getCount() == itemstack.getCount()) {
+					return ItemStack.EMPTY;
+				}
+				ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
+
+				if (index == 0) {
+					playerIn.dropItem(itemstack2, false);
+				}
 			}
 		}
 
