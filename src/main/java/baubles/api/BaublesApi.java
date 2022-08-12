@@ -94,4 +94,56 @@ public class BaublesApi {
 		return ImmutableMap.copyOf(BaubleType.icons);
 	}
 
+	/**
+	 * @param identifier The unique identifier for the {@link BaubleType}
+	 * @return  The {@link BaubleType} from the given identifier
+	 */
+	@Nullable
+	public static BaubleType getType(String identifier) {
+		return BaubleType.idToType.get(identifier);
+	}
+
+	/**
+	 * @return  An unmodifiable list of all unique registered identifiers
+	 */
+	public static ImmutableSet<String> getTypeIdentifiers() {
+		return ImmutableSet.copyOf(BaubleType.idToType.keySet());
+	}
+
+	/**
+	 * Holder class for IMC message identifiers
+	 */
+	public final static class IMC {
+
+		public static final String REGISTER_TYPE = "register_type";
+		public static final String MODIFY_TYPE = "modify_type";
+	}
+
+	private static Map<Item, Set<String>> itemToTypes = new HashMap<>();
+
+	public final static class FinderData {
+
+		String identifier;
+		int index;
+		ItemStack stack;
+
+		public FinderData(String identifier, int index, ItemStack stack) {
+			this.identifier = identifier;
+			this.index = index;
+			this.stack = stack;
+		}
+
+		public String getIdentifier() {
+			return identifier;
+		}
+
+		public int getIndex() {
+			return index;
+		}
+
+		public ItemStack getStack() {
+			return stack;
+		}
+	}
+
 }
