@@ -4,8 +4,10 @@ import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.BaublesCapabilities;
+import baubles.api.cap.BaublesContainer;
 import baubles.api.cap.IBaublesItemHandler;
 import baubles.common.Baubles;
+import baubles.common.Config;
 import baubles.common.event.BaubleEquipmentChangeEvent;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,13 +26,31 @@ public class SlotBauble extends SlotItemHandler
 	int baubleSlot;
 
 	BaubleType baubleType;
+
+	private String identifier;
 	EntityPlayer player;
 
-	public SlotBauble(EntityPlayer player, IBaublesItemHandler itemHandler, int slot, int par4, int par5)
+
+
+	public SlotBauble(EntityPlayer player, IBaublesItemHandler itemHandler, int slot, int xPosition, int yPosition)
 	{
-		super(itemHandler, slot, par4, par5);
+		super(itemHandler, slot, xPosition, yPosition);
 		this.baubleSlot = slot;
 		this.player = player;
+	}
+	public SlotBauble(EntityPlayer player, IBaublesItemHandler itemHandler, int slot, String identifier, int xPosition, int yPosition) {
+		super(itemHandler, slot, xPosition, yPosition);
+		this.identifier = identifier;
+		this.player = player;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public String getSlotName() {
+		String key = "baubles.identifier." + identifier;
+		if (!I18n.hasKey(key)) {
+			return identifier.substring(0, 1).toUpperCase() + identifier.substring(1);
+		}
+		return I18n.format(key);
 	}
 
 	/**
@@ -65,23 +85,25 @@ public class SlotBauble extends SlotItemHandler
 
 	@Override
 	public void putStack(ItemStack stack) {
+		ItemStack oldstack = getStack().copy();
+
 		if (getHasStack() && !ItemStack.areItemStacksEqual(stack,getStack()) &&
 				!((IBaublesItemHandler)getItemHandler()).isEventBlocked() &&
 				getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
 			getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onUnequipped(getStack(), player);
 		}
 
-		ItemStack oldstack = getStack().copy();
-		super.putStack(stack);
-
 		if (getHasStack() && !ItemStack.areItemStacksEqual(oldstack,getStack())
 				&& !((IBaublesItemHandler)getItemHandler()).isEventBlocked() &&
 				getStack().hasCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null)) {
 			getStack().getCapability(BaublesCapabilities.CAPABILITY_ITEM_BAUBLE, null).onEquipped(getStack(), player);
 		}
+
 		if (!ItemStack.areItemStacksEqual(oldstack,getStack())){
 			MinecraftForge.EVENT_BUS.post(new BaubleEquipmentChangeEvent(player, baubleSlot, oldstack, getStack()));
 		}
+
+		super.putStack(stack);
 	}
 
 	@Override
@@ -94,6 +116,9 @@ public class SlotBauble extends SlotItemHandler
 	@SideOnly(Side.CLIENT)
 	@Override
 	public String getSlotTexture() {
-		return BaublesApi.getIcons().getOrDefault(baubleType.name(), new ResourceLocation(Baubles.MODID, "item/empty_generic_slot")).toString();
+		if (baubleType != null) {
+			return BaublesApi.getIcons().get(baubleType.toString().toLowerCase()).toString();
+		}
+		return super.getSlotTexture();
 	}
 }
