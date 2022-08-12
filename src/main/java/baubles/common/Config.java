@@ -29,7 +29,7 @@ public class Config {
 		renderBaubles = config.getBoolean("baubleRender.enabled", Configuration.CATEGORY_CLIENT, renderBaubles, renderBaublesDesc);
 
 		String useCurioGUIDesc = "Set to false to disable the Curios GUI/Backport features(AKA disables the scrollable gui that allows wearing more then 7 trinkets)";
-		useCurioGUI = config.getBoolean("curiosGUI.enabled", Configuration.CATEGORY_GENERAL, useCurioGUI, useCurioGUIDesc);
+		useCurioGUI = config.getBoolean("curiosGUI.enabled", Configuration.CATEGORY_CLIENT, useCurioGUI, useCurioGUIDesc);
 		
 		if(config.hasChanged())	config.save();
 	}
