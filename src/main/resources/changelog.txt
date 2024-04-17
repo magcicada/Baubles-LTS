@@ -1,3 +1,11 @@
+1.12.2-1.0.7.0
+- build.gradle changes from CleanRooms template on github.
+- Fixed Example Baubles Ring translation key for item name.
+- Fix mod versioning, I forgot the API Identifier 0 within the jar, my bad.
+- Added IBauble#playEquipSound for Server side eqipping sound identifiers which defaults to Generic armor equip sound.
+- Added IBauble#canRightClickEquip, default true, almost all baubles should be right click equip-able now.
+- The beginning of Curio GUI implementations controlled by boolean config option, defaults to false(disabled) Alpha State
+
 1.12.2-1.6.0
 - Added infinite slots and reworked the capability side of the mod Thanks to(Jubiman)
 - XNiter(Me) Created fork of Baubles
@@ -17,7 +25,6 @@
 - Added .lang Thanks to()
 - Added sv_se.lang, Thanks to(Regnander)
 - Added BaubleEquipmentChangeEvent for other mods to work with
-
 
 1.5.2
 - API: added isBaubleEquipped helper method to BaublesAPI
